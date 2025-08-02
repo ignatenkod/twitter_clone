@@ -1,0 +1,10 @@
+Django>=4.2
+django-environ
+psycopg2-binary
+django-crispy-forms
+crispy-bootstrap5
+django-allauth
+django-channels
+channels-redis
+celery
+redis
