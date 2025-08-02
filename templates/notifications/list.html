@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Уведомления{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Подключение к WebSocket для уведомлений
+        var notificationSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/notifications/'
+        );
+        
+        notificationSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            if (data.type === 'notification') {
+                // Добавление нового уведомления
+                var notificationsList = document.getElementById('notifications-list');
+                var newNotification = document.createElement('div');
+                newNotification.className = 'alert alert-info';
+                newNotification.innerHTML = data.notification.message;
+                notificationsList.prepend(newNotification);
+                
+                // Обновление счетчика
+                var unreadCount = document.getElementById('unread-count');
+                var currentCount = parseInt(unreadCount.textContent);
+                unreadCount.textContent = currentCount + 1;
+            } else if (data.type === 'unread_count') {
+                // Обновление счетчика
+                document.getElementById('unread-count').textContent = data.count;
+            }
+        };
+        
+        // Запрос количества непрочитанных уведомлений при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            notificationSocket.send(JSON.stringify({
+                'type': 'get_unread_count'
+            }));
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2 class="mb-4">Уведомления</h2>
+            
+            <div id="notifications-list">
+                {% for notification in notifications %}
+                    <div class="alert {% if notification.is_read %}alert-secondary{% else %}alert-info{% endif %} mb-3">
+                        {{ notification.message }}
+                        <small class="text-muted float-end">
+                            {{ notification.created_at|timesince }} назад
+                            {% if not notification.is_read %}
+                                <a href="{% url 'notifications:mark_as_read' pk=notification.id %}" 
+                                   class="ms-2 text-decoration-none">
+                                    <i class="bi bi-check-circle"></i>
+                                </a>
+                            {% endif %}
+                        </small>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-secondary">У вас нет уведомлений</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
