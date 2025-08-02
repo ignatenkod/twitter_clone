@@ -1,0 +1,44 @@
+/* Базовые стили */
+body {
+    padding-top: 56px;
+}
+
+/* Аватар по умолчанию */
+.default-avatar {
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-weight: bold;
+}
+
+/* Анимация для уведомлений */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-item {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Кастомные стили для постов */
+.post-card {
+    transition: transform 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Стили для лайков */
+.like-btn.active {
+    color: #dc3545;
+}
+
+/* Адаптивные изображения */
+.post-image {
+    max-height: 500px;
+    object-fit: contain;
+}
