@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Пост {{ post.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        {% include 'posts/includes/post_card.html' with post=post %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Комментарии</h5>
+            </div>
+            <div class="card-body">
+                {% if user.is_authenticated %}
+                    <form id="comment-form" hx-post="{% url 'posts:add_comment' pk=post.id %}" hx-target="#comments-list" hx-swap="afterbegin">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info">
+                        <a href="{% url 'users:login' %}">Войдите</a>, чтобы оставить комментарий
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div id="comments-list">
+            {% for comment in comments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ comment.author.avatar.url|default:'/static/images/default_avatar.png' }}" 
+                                 class="rounded-circle me-2" width="40" height="40" alt="{{ comment.author.username }}">
+                            <a href="{% url 'users:profile' username=comment.author.username %}" class="text-decoration-none">
+                                <strong>{{ comment.author.username }}</strong>
+                            </a>
+                            <small class="text-muted ms-auto">{{ comment.created_at|timesince }} назад</small>
+                        </div>
+                        <p class="mb-0">{{ comment.content }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-secondary">Пока нет комментариев. Будьте первым!</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
