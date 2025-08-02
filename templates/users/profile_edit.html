@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h2>Редактирование профиля</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_avatar" class="form-label">Аватар</label>
+                        <input type="file" class="form-control" id="id_avatar" name="avatar">
+                        {% if form.avatar.value %}
+                            <div class="mt-2">
+                                <img src="{{ form.avatar.value.url }}" width="100" alt="Текущий аватар">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_bio" class="form-label">О себе</label>
+                        <textarea class="form-control" id="id_bio" name="bio" rows="3">{{ form.bio.value|default:'' }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_first_name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="id_first_name" name="first_name" value="{{ form.first_name.value|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_last_name" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="id_last_name" name="last_name" value="{{ form.last_name.value|default:'' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
