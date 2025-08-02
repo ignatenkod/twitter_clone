@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Лента{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Новый пост</h5>
+                    <form hx-post="{% url 'posts:create' %}" hx-target="#posts" hx-swap="afterbegin">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="content" class="form-control" rows="3" placeholder="Что у вас нового?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Опубликовать</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="posts">
+                {% for post in posts %}
+                    {% include 'posts/includes/post_card.html' with post=post %}
+                {% empty %}
+                    <div class="alert alert-info">Нет постов в ленте. Подпишитесь на других пользователей!</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
